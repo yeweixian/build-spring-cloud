@@ -41,6 +41,7 @@ allprojects { project ->
     }
 }
 
+//注册中心
 project("eureka-server-1") {
 
     dependencies {
@@ -49,10 +50,22 @@ project("eureka-server-1") {
     }
 }
 
+//服务提供方
 project("eureka-client-1") {
 
     dependencies {
         compile('org.springframework.cloud:spring-cloud-starter-eureka')
+        compile('org.springframework.boot:spring-boot-starter-web')
+        testCompile('org.springframework.boot:spring-boot-starter-test')
+    }
+}
+
+//服务消费方
+project("service-ribbon-1") {
+
+    dependencies {
+        compile('org.springframework.cloud:spring-cloud-starter-eureka')
+        compile('org.springframework.cloud:spring-cloud-starter-ribbon')
         compile('org.springframework.boot:spring-boot-starter-web')
         testCompile('org.springframework.boot:spring-boot-starter-test')
     }
