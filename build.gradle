@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '2.0.0.RELEASE'
+        springBootVersion = '1.5.2.RELEASE'
     }
     repositories {
         mavenCentral()
@@ -20,7 +20,7 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 
 ext {
-    springCloudVersion = 'Finchley.M9'
+    springCloudVersion = 'Dalston.RC1'
 }
 
 allprojects { project ->
@@ -44,7 +44,16 @@ allprojects { project ->
 project("eureka-server-1") {
 
     dependencies {
-        compile('org.springframework.cloud:spring-cloud-starter-netflix-eureka-server')
+        compile('org.springframework.cloud:spring-cloud-starter-eureka-server')
+        testCompile('org.springframework.boot:spring-boot-starter-test')
+    }
+}
+
+project("eureka-client-1") {
+
+    dependencies {
+        compile('org.springframework.cloud:spring-cloud-starter-eureka')
+        compile('org.springframework.boot:spring-boot-starter-web')
         testCompile('org.springframework.boot:spring-boot-starter-test')
     }
 }
