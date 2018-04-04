@@ -68,6 +68,9 @@ project("service-ribbon-1") {
         compile('org.springframework.cloud:spring-cloud-starter-ribbon')
         //断路器接入
         compile('org.springframework.cloud:spring-cloud-starter-hystrix')
+        compile('org.springframework.boot:spring-boot-starter-actuator')
+        compile('org.springframework.cloud:spring-cloud-starter-hystrix-dashboard')
+
         compile('org.springframework.boot:spring-boot-starter-web')
         testCompile('org.springframework.boot:spring-boot-starter-test')
     }
