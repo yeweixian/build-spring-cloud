@@ -9,3 +9,4 @@
 ###路由网关
     service-zuul 对应 810x
 ###配置中心
+    config-server 对应 877x
