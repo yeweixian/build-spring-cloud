@@ -34,6 +34,7 @@ public class HttpClientUtilTest {
                 .map(map)
                 .client(HCB.custom().sslpv(SSLs.SSLProtocolVersion.TLSv1_2).build()));
         // System.out.println(result);
+        final int[] deckCount = {0};
         Optional.ofNullable(gson.fromJson(result, JsonElement.class))
                 .filter(JsonElement::isJsonObject)
                 .map(JsonElement::getAsJsonObject)
@@ -41,7 +42,9 @@ public class HttpClientUtilTest {
                 .map(item -> item.getAsJsonObject("data"))
                 .ifPresent(dataJsonObject -> professionList.forEach(item -> {
                     JsonArray jsonArray = dataJsonObject.getAsJsonArray(item);
-                    System.out.println(jsonArray.size());
+                    deckCount[0] += jsonArray.size();
+                    System.out.println(item + ": " + jsonArray.size());
                 }));
+        System.out.println(deckCount[0]);
     }
 }
