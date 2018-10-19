@@ -111,6 +111,10 @@ project("test-server") {
 
     dependencies {
         compile('com.google.code.gson:gson:2.2.2')
+        compile('com.google.guava:guava:27.0-jre')
         compile('org.projectlombok:lombok:1.14.0')
+
+        compile('com.arronlong:httpclientutil:1.0.4')
+        compile('commons-logging:commons-logging:1.2')
     }
 }
