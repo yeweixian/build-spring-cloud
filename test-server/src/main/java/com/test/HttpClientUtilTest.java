@@ -59,6 +59,14 @@ public class HttpClientUtilTest {
         // System.out.println(result);
         Optional.ofNullable(Jsoup.parse(result))
                 .map(item -> item.selectFirst("#react_context"))
-                .ifPresent(item -> System.out.println(item.html()));
+                .ifPresent(item -> {
+                    System.out.println(item.html());
+                    System.out.println(item.nextElementSibling()
+                            .nextElementSibling().toString());
+                });
+    }
+
+    public void queryCardMsgs() {
+        //https://api.hearthstonejson.com/v1/27358/zhCN/cards.json
     }
 }
