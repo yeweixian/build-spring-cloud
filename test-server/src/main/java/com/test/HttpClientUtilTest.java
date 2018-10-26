@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import org.jsoup.Jsoup;
 import org.junit.Test;
 
 import java.util.List;
@@ -55,6 +56,9 @@ public class HttpClientUtilTest {
         String result = HttpClientUtil.get(HttpConfig.custom()
                 .url("https://hsreplay.net/cards/42395/")
                 .client(HCB.custom().sslpv(SSLs.SSLProtocolVersion.TLSv1_2).build()));
-        System.out.println(result);
+        // System.out.println(result);
+        Optional.ofNullable(Jsoup.parse(result))
+                .map(item -> item.selectFirst("#react_context"))
+                .ifPresent(item -> System.out.println(item.html()));
     }
 }
