@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import org.junit.Test;
 
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,8 @@ public class HttpClientUtilTest {
 
     private static final List<String> professionList = Lists.newArrayList("DRUID", "HUNTER", "MAGE", "PALADIN", "PRIEST", "ROGUE", "SHAMAN", "WARLOCK", "WARRIOR");
 
-    public static void main(String[] args) throws HttpProcessException {
+    @Test
+    public void queryDecks() throws HttpProcessException {
         // System.setProperty("javax.net.debug", "all");
         Map<String, Object> map = Maps.newHashMap();
         map.put("GameType", "RANKED_STANDARD");

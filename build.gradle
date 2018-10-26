@@ -116,5 +116,7 @@ project("test-server") {
 
         compile('com.arronlong:httpclientutil:1.0.4')
         compile('commons-logging:commons-logging:1.2')
+
+        compile('junit:junit:4.12')
     }
 }
