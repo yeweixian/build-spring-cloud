@@ -49,4 +49,12 @@ public class HttpClientUtilTest {
                 }));
         System.out.println(deckCount[0]);
     }
+
+    @Test
+    public void queryCards() throws HttpProcessException {
+        String result = HttpClientUtil.get(HttpConfig.custom()
+                .url("https://hsreplay.net/cards/42395/")
+                .client(HCB.custom().sslpv(SSLs.SSLProtocolVersion.TLSv1_2).build()));
+        System.out.println(result);
+    }
 }

@@ -110,13 +110,17 @@ project("config-server-1") {
 project("test-server") {
 
     dependencies {
+        //json解析
         compile('com.google.code.gson:gson:2.2.2')
+        //HTML解析
+        compile ('org.jsoup:jsoup:1.11.3')
+        //常用工具
         compile('com.google.guava:guava:27.0-jre')
         compile('org.projectlombok:lombok:1.14.0')
-
+        //http请求工具及日志
         compile('com.arronlong:httpclientutil:1.0.4')
         compile('commons-logging:commons-logging:1.2')
-
+        //junit test
         compile('junit:junit:4.12')
     }
 }
