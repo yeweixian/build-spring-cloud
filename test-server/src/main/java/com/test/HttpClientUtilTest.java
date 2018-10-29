@@ -66,7 +66,19 @@ public class HttpClientUtilTest {
                 });
     }
 
-    public void queryCardMsgs() {
-        //https://api.hearthstonejson.com/v1/27358/zhCN/cards.json
+    @Test
+    public void queryCardMsgs() throws HttpProcessException {
+        String result = HttpClientUtil.get(HttpConfig.custom()
+                .url("https://api.hearthstonejson.com/v1/27358/zhCN/cards.json")
+                .client(HCB.custom().sslpv(SSLs.SSLProtocolVersion.TLSv1_2).build()));
+        // System.out.println(result);
+        Optional.ofNullable(gson.fromJson(result, JsonElement.class))
+                .filter(JsonElement::isJsonArray)
+                .map(JsonElement::getAsJsonArray)
+                .ifPresent(jsonArray -> jsonArray.forEach(item -> {
+                    Optional.ofNullable(item)
+                            .map(JsonElement::getAsJsonObject)
+                            .ifPresent(System.out::println);
+                }));
     }
 }
