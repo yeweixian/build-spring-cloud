@@ -70,6 +70,8 @@ public class HttpClientUtilTest {
     public void queryCardMsgs() throws HttpProcessException {
         String result = HttpClientUtil.get(HttpConfig.custom()
                 .url("https://api.hearthstonejson.com/v1/27358/zhCN/cards.json")
+                //.url("https://api.hearthstonejson.com/v1/latest/zhCN/cards.json")
+                //.url("https://api.hearthstonejson.com/v1/latest/zhCN/cards.collectible.json")
                 .client(HCB.custom().sslpv(SSLs.SSLProtocolVersion.TLSv1_2).build()));
         // System.out.println(result);
         Optional.ofNullable(gson.fromJson(result, JsonElement.class))
