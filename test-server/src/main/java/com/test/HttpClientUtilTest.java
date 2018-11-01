@@ -61,26 +61,33 @@ public class HttpClientUtilTest {
                 .map(item -> item.selectFirst("#react_context"))
                 .ifPresent(item -> {
                     System.out.println(item.html());
-                    System.out.println(item.nextElementSibling()
-                            .nextElementSibling().toString());
+//                    System.out.println(item.nextElementSibling()
+//                            .nextElementSibling().toString());
                 });
     }
 
     @Test
     public void queryCardMsgs() throws HttpProcessException {
         String result = HttpClientUtil.get(HttpConfig.custom()
-                .url("https://api.hearthstonejson.com/v1/27358/zhCN/cards.json")
-                //.url("https://api.hearthstonejson.com/v1/latest/zhCN/cards.json")
-                //.url("https://api.hearthstonejson.com/v1/latest/zhCN/cards.collectible.json")
+//                .url("https://api.hearthstonejson.com/v1/27358/zhCN/cards.json")
+//                .url("https://api.hearthstonejson.com/v1/latest/zhCN/cards.json")
+                .url("https://api.hearthstonejson.com/v1/latest/zhCN/cards.collectible.json")
                 .client(HCB.custom().sslpv(SSLs.SSLProtocolVersion.TLSv1_2).build()));
         // System.out.println(result);
+        final int[] cardCount = {0};
         Optional.ofNullable(gson.fromJson(result, JsonElement.class))
                 .filter(JsonElement::isJsonArray)
                 .map(JsonElement::getAsJsonArray)
-                .ifPresent(jsonArray -> jsonArray.forEach(item -> {
-                    Optional.ofNullable(item)
-                            .map(JsonElement::getAsJsonObject)
-                            .ifPresent(System.out::println);
-                }));
+                .ifPresent(jsonArray -> {
+                    System.out.println("total: " + jsonArray.size());
+                    jsonArray.forEach(item -> Optional.ofNullable(item).ifPresent(jsonElement -> {
+                        Map map = gson.fromJson(jsonElement, Map.class);
+                        if (map.containsKey("collectible")) {
+                            cardCount[0]++;
+                        }
+                        System.out.println("id: " + map.get("id") + ", dbfId: " + map.get("dbfId"));
+                    }));
+                });
+        System.out.println(cardCount[0]);
     }
 }
