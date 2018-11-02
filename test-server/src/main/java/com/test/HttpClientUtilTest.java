@@ -81,6 +81,7 @@ public class HttpClientUtilTest {
                 .ifPresent(jsonArray -> {
                     System.out.println("total: " + jsonArray.size());
                     jsonArray.forEach(item -> Optional.ofNullable(item).ifPresent(jsonElement -> {
+                        System.out.println(jsonElement);
                         Map map = gson.fromJson(jsonElement, Map.class);
                         if (map.containsKey("collectible")) {
                             cardCount[0]++;
