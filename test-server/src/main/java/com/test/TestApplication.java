@@ -1,5 +1,8 @@
 package com.test;
 
+import com.test.dao.student.StudentMapper;
+import com.test.dao.student.entity.Student;
+import org.apache.ibatis.session.SqlSession;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -7,6 +10,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.util.List;
+import java.util.Optional;
 
 @SpringBootApplication
 public class TestApplication {
@@ -19,5 +24,11 @@ public class TestApplication {
         System.out.println(connection.getCatalog());
         System.out.println(context.getBean(JdbcTemplate.class));
         connection.close();
+
+        System.out.println("------------------------------------");
+        SqlSession sqlSession = context.getBean(SqlSession.class);
+        StudentMapper studentMapper = sqlSession.getMapper(StudentMapper.class);
+        List<Student> students = studentMapper.findAllStudents();
+        Optional.of(students).ifPresent(item -> item.forEach(System.out::println));
     }
 }
