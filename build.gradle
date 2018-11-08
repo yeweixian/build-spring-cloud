@@ -31,6 +31,7 @@ allprojects { project ->
 
     repositories {
         mavenCentral()
+        jcenter()
         maven { url "http://repo.spring.io/milestone" }
     }
 
@@ -113,13 +114,15 @@ project("test-server") {
         //json解析
         compile('com.google.code.gson:gson:2.2.2')
         //HTML解析
-        compile ('org.jsoup:jsoup:1.11.3')
+        compile('org.jsoup:jsoup:1.11.3')
         //常用工具
         compile('com.google.guava:guava:27.0-jre')
         compile('org.projectlombok:lombok:1.14.0')
         //http请求工具及日志
         compile('com.arronlong:httpclientutil:1.0.4')
         compile('commons-logging:commons-logging:1.2')
+        //图像分析
+        compile("cognitivej:cognitivej:0.6.2")
         //junit test
         compile('junit:junit:4.12')
         //spring boot
