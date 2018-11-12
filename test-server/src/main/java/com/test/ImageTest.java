@@ -4,7 +4,14 @@ import cognitivej.vision.face.scenario.FaceScenarios;
 import cognitivej.vision.overlay.CognitiveJColourPalette;
 import cognitivej.vision.overlay.RectangleType;
 import cognitivej.vision.overlay.builder.ImageOverlayBuilder;
+import com.arronlong.httpclientutil.HttpClientUtil;
+import com.arronlong.httpclientutil.common.HttpConfig;
+import com.arronlong.httpclientutil.common.HttpHeader;
+import com.arronlong.httpclientutil.exception.HttpProcessException;
+import org.apache.http.client.utils.URIBuilder;
 import org.junit.Test;
+
+import java.net.URISyntaxException;
 
 public class ImageTest {
 
@@ -20,5 +27,25 @@ public class ImageTest {
         ImageOverlayBuilder imageOverlayBuilder = ImageOverlayBuilder.builder(IMAGE_URL);
         imageOverlayBuilder.outlineFacesOnImage(faceScenarios.findFaces(IMAGE_URL), RectangleType.FULL,
                 CognitiveJColourPalette.STRAWBERRY).launchViewer();
+    }
+
+    @Test
+    public void testFaceDetect() throws URISyntaxException, HttpProcessException {
+        URIBuilder uriBuilder = new URIBuilder("https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect");
+        // Request parameters. All of them are optional.
+        uriBuilder.setParameter("returnFaceId", "true");
+        uriBuilder.setParameter("returnFaceLandmarks", "false");
+        uriBuilder.setParameter("returnFaceAttributes",
+                "age,gender,headPose,smile,facialHair,glasses,emotion,hair,makeup,occlusion,accessories,blur,exposure,noise");
+        // Prepare the URI for the REST API call.
+        System.out.println(uriBuilder.build());
+        String result = HttpClientUtil.post(HttpConfig.custom()
+                .url(uriBuilder.build().toString())
+                .headers(HttpHeader.custom()
+                        .contentType("application/json")
+                        .other("Ocp-Apim-Subscription-Key", "351185f674bb419fb0f6482cdeeb1766")
+                        .build())
+                .json("{\"url\":\"https://upload.wikimedia.org/wikipedia/commons/c/c3/RH_Louise_Lillian_Gish.jpg\"}"));
+        System.out.println(result);
     }
 }
