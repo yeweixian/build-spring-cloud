@@ -11,7 +11,7 @@ public class Card {
     private String cardClass;
     private String set;
     private String rarity;
-    private int cost;
+    private String cost;
     private String attack;
     private String health;
     private String overload;
