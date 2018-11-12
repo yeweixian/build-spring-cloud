@@ -7,6 +7,7 @@ import com.arronlong.httpclientutil.common.SSLs;
 import com.arronlong.httpclientutil.exception.HttpProcessException;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -17,6 +18,7 @@ import org.junit.Test;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public class HttpClientUtilTest {
 
@@ -75,6 +77,7 @@ public class HttpClientUtilTest {
                 .client(HCB.custom().sslpv(SSLs.SSLProtocolVersion.TLSv1_2).build()));
         // System.out.println(result);
         final int[] cardCount = {0};
+        final Set keySet = Sets.newHashSet();
         Optional.ofNullable(gson.fromJson(result, JsonElement.class))
                 .filter(JsonElement::isJsonArray)
                 .map(JsonElement::getAsJsonArray)
@@ -86,9 +89,11 @@ public class HttpClientUtilTest {
                         if (map.containsKey("collectible")) {
                             cardCount[0]++;
                         }
-                        System.out.println("id: " + map.get("id") + ", dbfId: " + map.get("dbfId"));
+//                        System.out.println("id: " + map.get("id") + ", dbfId: " + map.get("dbfId"));
+                        keySet.addAll(map.keySet());
                     }));
                 });
         System.out.println(cardCount[0]);
+        System.out.println(keySet);
     }
 }
