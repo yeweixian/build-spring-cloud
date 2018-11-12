@@ -8,6 +8,7 @@ import com.arronlong.httpclientutil.exception.HttpProcessException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.reflect.TypeToken;
 import com.test.dao.hearthstone.CardMapper;
 import com.test.dao.hearthstone.entity.Card;
 import org.apache.ibatis.session.SqlSession;
@@ -23,7 +24,11 @@ import java.util.Optional;
 @SpringBootTest
 public class HearthStoneApplicationTests {
 
-    private static final Gson gson = new GsonBuilder().serializeNulls().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+    private static final Gson gson = new GsonBuilder()
+            .disableInnerClassSerialization()
+            .serializeNulls()
+            .setDateFormat("yyyy-MM-dd HH:mm:ss")
+            .create();
 
     @Autowired
     private SqlSession sqlSession;
@@ -45,7 +50,8 @@ public class HearthStoneApplicationTests {
                     System.out.println("total: " + jsonArray.size());
                     jsonArray.forEach(jsonElement ->
                             Optional.ofNullable(jsonElement).ifPresent(item -> {
-                                Card card = gson.fromJson(item, Card.class);
+                                Card card = gson.fromJson(item, new TypeToken<Card>() {
+                                }.getType());
                                 cardMapper.addCard(card);
                             }));
                 });
