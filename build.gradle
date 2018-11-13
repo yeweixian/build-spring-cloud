@@ -113,6 +113,7 @@ project("test-server") {
     dependencies {
         //json解析
         compile('com.google.code.gson:gson:2.8.5')
+        compile('com.alibaba:fastjson:1.2.51')
         //HTML解析
         compile('org.jsoup:jsoup:1.11.3')
         //常用工具

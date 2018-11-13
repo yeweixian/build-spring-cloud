@@ -1,5 +1,6 @@
 package com.test;
 
+import com.alibaba.fastjson.JSON;
 import com.arronlong.httpclientutil.HttpClientUtil;
 import com.arronlong.httpclientutil.builder.HCB;
 import com.arronlong.httpclientutil.common.HttpConfig;
@@ -8,7 +9,6 @@ import com.arronlong.httpclientutil.exception.HttpProcessException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
-import com.google.gson.reflect.TypeToken;
 import com.test.dao.hearthstone.CardMapper;
 import com.test.dao.hearthstone.entity.Card;
 import org.apache.ibatis.session.SqlSession;
@@ -50,8 +50,7 @@ public class HearthStoneApplicationTests {
                     System.out.println("total: " + jsonArray.size());
                     jsonArray.forEach(jsonElement ->
                             Optional.ofNullable(jsonElement).ifPresent(item -> {
-                                Card card = gson.fromJson(item, new TypeToken<Card>() {
-                                }.getType());
+                                Card card = JSON.parseObject(item.toString(), Card.class);
                                 cardMapper.addCard(card);
                             }));
                 });

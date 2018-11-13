@@ -1,5 +1,6 @@
 package com.test;
 
+import com.alibaba.fastjson.JSON;
 import com.arronlong.httpclientutil.HttpClientUtil;
 import com.arronlong.httpclientutil.builder.HCB;
 import com.arronlong.httpclientutil.common.HttpConfig;
@@ -12,13 +13,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.test.dao.hearthstone.entity.Card;
 import org.jsoup.Jsoup;
 import org.junit.Test;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 public class HttpClientUtilTest {
 
@@ -84,16 +84,40 @@ public class HttpClientUtilTest {
                 .ifPresent(jsonArray -> {
                     System.out.println("total: " + jsonArray.size());
                     jsonArray.forEach(item -> Optional.ofNullable(item).ifPresent(jsonElement -> {
-                        System.out.println(jsonElement);
+//                        System.out.println(jsonElement);
                         Map map = gson.fromJson(jsonElement, Map.class);
                         if (map.containsKey("collectible")) {
                             cardCount[0]++;
                         }
 //                        System.out.println("id: " + map.get("id") + ", dbfId: " + map.get("dbfId"));
                         keySet.addAll(map.keySet());
+
+//                        Card card = gson.fromJson(jsonElement, Card.class);
+                        Card card = JSON.parseObject(jsonElement.toString(), Card.class);
+                        System.out.println(card);
                     }));
                 });
         System.out.println(cardCount[0]);
         System.out.println(keySet);
+    }
+
+    @Test
+    public void testCardMapping() throws IllegalAccessException, InstantiationException {
+        Card card = Card.class.newInstance();
+        int[] count = {0};
+        Arrays.stream(Card.class.getMethods()).forEach(method -> {
+            String methodName = method.getName();
+            if (methodName.startsWith("set")) {
+                count[0]++;
+//                System.out.println(methodName.substring(3).toLowerCase());
+                try {
+                    method.invoke(card, "test");
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        System.out.println(count[0]);
+        System.out.println(card);
     }
 }
