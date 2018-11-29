@@ -47,6 +47,7 @@ public class ZookeeperTest {
     public void testGetChildren() throws IOException, InterruptedException, KeeperException {
         CountDownLatch countDownLatch = new CountDownLatch(1);
         ZooKeeper zk = new ZooKeeper("127.0.0.1:2181", 1000, event -> {
+            log.info("Watcher.Event : {}", event);
             if (event.getState() == Watcher.Event.KeeperState.SyncConnected) {
                 countDownLatch.countDown();
             }
@@ -54,7 +55,9 @@ public class ZookeeperTest {
         countDownLatch.await();
 
         log.info("------------------------------------");
-        Optional.ofNullable(zk.getChildren("/", false))
+        System.out.println(new String(zk.getData("/test", true, null)));
+        log.info("------------------------------------");
+        Optional.ofNullable(zk.getChildren("/", true))
                 .orElse(Lists.newArrayList())
                 .forEach(System.out::println);
         log.info("------------------------------------");
