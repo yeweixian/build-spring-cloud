@@ -1,5 +1,6 @@
 package com.test;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.*;
@@ -54,6 +55,9 @@ public class ZookeeperTest {
         });
         countDownLatch.await();
 
+        log.info("------------------------------------");
+        System.out.println(JSON.toJSONString(zk.exists("/", true)));
+        System.out.println(JSON.toJSONString(zk.exists("/test", true)));
         log.info("------------------------------------");
         System.out.println(new String(zk.getData("/test", true, null)));
         log.info("------------------------------------");
