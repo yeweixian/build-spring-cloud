@@ -1,13 +1,15 @@
 package com.test;
 
 import com.google.common.collect.Lists;
-import org.apache.zookeeper.KeeperException;
-import org.apache.zookeeper.ZooKeeper;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.zookeeper.*;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
 
+@Slf4j
 public class ZookeeperTest {
 
     @Test
@@ -22,6 +24,40 @@ public class ZookeeperTest {
                 .orElse(Lists.newArrayList())
                 .forEach(System.out::println);
         System.out.println("------------------------------------");
+
+        zk.close();
+    }
+
+    @Test
+    public void testCreate() throws IOException, InterruptedException, KeeperException {
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+        ZooKeeper zk = new ZooKeeper("127.0.0.1:2181", 1000, event -> {
+            if (event.getState() == Watcher.Event.KeeperState.SyncConnected) {
+                countDownLatch.countDown();
+            }
+        });
+        countDownLatch.await();
+
+        zk.create("/test", "test msg".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+
+        zk.close();
+    }
+
+    @Test
+    public void testGetChildren() throws IOException, InterruptedException, KeeperException {
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+        ZooKeeper zk = new ZooKeeper("127.0.0.1:2181", 1000, event -> {
+            if (event.getState() == Watcher.Event.KeeperState.SyncConnected) {
+                countDownLatch.countDown();
+            }
+        });
+        countDownLatch.await();
+
+        log.info("------------------------------------");
+        Optional.ofNullable(zk.getChildren("/", false))
+                .orElse(Lists.newArrayList())
+                .forEach(System.out::println);
+        log.info("------------------------------------");
 
         zk.close();
     }
