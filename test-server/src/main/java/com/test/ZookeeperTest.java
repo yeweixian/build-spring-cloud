@@ -16,10 +16,11 @@ public class ZookeeperTest {
     @Test
     public void testZookeeper() throws IOException, KeeperException, InterruptedException {
 //        ZooKeeper zk = new ZooKeeper("10.198.195.147:2181", 1000, event -> System.out.println("已经触发了" + event.getType() + "事件！"));
-        ZooKeeper zk = new ZooKeeper("127.0.0.1:2181", 1000, event -> System.out.println("已经触发了" + event.getType() + "事件！"));
+//        ZooKeeper zk = new ZooKeeper("127.0.0.1:2181", 1000, event -> System.out.println("已经触发了" + event.getType() + "事件！"));
+        ZooKeeper zk = new ZooKeeper("127.0.0.1:2181", 1000, event -> log.info("Watcher.Event : {}", event));
 
-        System.out.println(new String(zk.getData("/", false, null)));
-        System.out.println("目录节点状态：[" + zk.exists("/", true) + "]");
+//        System.out.println(new String(zk.getData("/", false, null)));
+//        System.out.println("目录节点状态：[" + zk.exists("/", true) + "]");
         System.out.println("------------------------------------");
         Optional.ofNullable(zk.getChildren("/", false))
                 .orElse(Lists.newArrayList())
