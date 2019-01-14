@@ -10,3 +10,5 @@
     service-zuul 对应 810x
 ###配置中心
     config-server 对应 877x
+###配置客户端
+    config-client 对应 878x
