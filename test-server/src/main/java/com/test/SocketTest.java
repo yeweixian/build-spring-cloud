@@ -125,4 +125,68 @@ public class SocketTest {
         outputStream.close();
         socket.close();
     }
+
+    /**
+     * Loop Receive
+     */
+    @Test
+    public void testSocketServer3() throws IOException {
+        System.out.println("server start & wait...");
+        ServerSocket server = new ServerSocket(PORT);
+        Socket socket = server.accept();
+        InputStream inputStream = socket.getInputStream();
+
+        byte[] bytes;
+        while (true) {
+            int first = inputStream.read();
+            if (first == -1) {
+                break;
+            }
+
+            int second = inputStream.read();
+            int length = (first << 8) + second;
+            bytes = new byte[length];
+            int len = inputStream.read(bytes);
+            System.out.println("get message from client: " + new String(bytes, 0, len, CHARSET));
+        }
+
+        System.out.println("server stop.");
+        inputStream.close();
+        socket.close();
+        server.close();
+    }
+
+    /**
+     * Loop Send
+     */
+    @Test
+    public void testSocketClient3() throws IOException {
+        System.out.println("client send...");
+        Socket socket = new Socket(HOST, PORT);
+        OutputStream outputStream = socket.getOutputStream();
+
+        String message = "Hello, DangerYe";
+        byte[] sendBytes = message.getBytes(CHARSET);
+        outputStream.write(sendBytes.length >> 8);
+        outputStream.write(sendBytes.length);
+        outputStream.write(sendBytes);
+        outputStream.flush();
+
+        message = "Here is client.";
+        sendBytes = message.getBytes(CHARSET);
+        outputStream.write(sendBytes.length >> 8);
+        outputStream.write(sendBytes.length);
+        outputStream.write(sendBytes);
+        outputStream.flush();
+
+        message = "Nice to meet you!";
+        sendBytes = message.getBytes(CHARSET);
+        outputStream.write(sendBytes.length >> 8);
+        outputStream.write(sendBytes.length);
+        outputStream.write(sendBytes);
+
+        System.out.println("client send done.");
+        outputStream.close();
+        socket.close();
+    }
 }
