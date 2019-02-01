@@ -9,6 +9,10 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+/**
+ * Socket 研究学习
+ * 参考地址: https://www.cnblogs.com/yiwangzhibujian/p/7107785.html
+ */
 @Slf4j
 public class SocketTest {
 
