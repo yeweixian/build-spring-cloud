@@ -203,6 +203,7 @@ public class SocketTest {
         Executors.newSingleThreadExecutor().execute(() -> {
             try {
                 while (true) {
+                    System.out.println("server accept...");
                     Socket socket = server.accept();
                     threadPool.submit(() -> {
                         try {
