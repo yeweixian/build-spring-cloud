@@ -1,0 +1,5 @@
+server:
+  port: 9980
+spring:
+  application:
+    name: test-cobweb-service-1

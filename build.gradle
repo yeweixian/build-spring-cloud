@@ -148,3 +148,12 @@ project("test-server") {
         testCompile('org.springframework.boot:spring-boot-starter-test')
     }
 }
+
+project("test-cobweb-service-1") {
+
+    dependencies {
+        // spring boot
+        compile('org.springframework.boot:spring-boot-starter-web')
+        testCompile('org.springframework.boot:spring-boot-starter-test')
+    }
+}
