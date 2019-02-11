@@ -8,6 +8,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Socket 研究学习
@@ -188,5 +190,53 @@ public class SocketTest {
         System.out.println("client send done.");
         outputStream.close();
         socket.close();
+    }
+
+    @Test
+    public void testSocketServer4() throws IOException {
+        System.out.println("server start & wait...");
+        ServerSocket server = new ServerSocket(PORT);
+
+        //如果使用多线程，那就需要线程池，防止并发过高时创建过多线程耗尽资源
+        ExecutorService threadPool = Executors.newFixedThreadPool(100);
+
+        Executors.newSingleThreadExecutor().execute(() -> {
+            try {
+                while (true) {
+                    Socket socket = server.accept();
+                    threadPool.submit(() -> {
+                        try {
+                            InputStream inputStream = socket.getInputStream();
+                            byte[] bytes = new byte[1024];
+                            int len;
+                            StringBuilder sb = new StringBuilder();
+
+                            while ((len = inputStream.read(bytes)) != -1) {
+                                sb.append(new String(bytes, 0, len, CHARSET));
+                            }
+
+                            System.out.println("get message from client: " + sb);
+
+                            OutputStream outputStream = socket.getOutputStream();
+
+                            String message = "Hello, client! I get the message.";
+
+                            outputStream.write(message.getBytes(CHARSET));
+
+                            System.out.println("server stop.");
+                            outputStream.close();
+                            inputStream.close();
+                            socket.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        while (true) {
+        }
     }
 }
