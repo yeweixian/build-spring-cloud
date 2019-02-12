@@ -159,6 +159,7 @@ project("test-cobweb-api") {
 project("test-cobweb") {
 
     dependencies {
+        compile('org.springframework.boot:spring-boot-configuration-processor')
     }
 }
 
