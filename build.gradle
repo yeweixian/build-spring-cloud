@@ -149,9 +149,24 @@ project("test-server") {
     }
 }
 
+project("test-cobweb-api") {
+
+    dependencies {
+        compile('org.projectlombok:lombok:1.18.4')
+    }
+}
+
+project("test-cobweb") {
+
+    dependencies {
+    }
+}
+
 project("test-cobweb-service-1") {
 
     dependencies {
+        compile project(':test-cobweb')
+        compile project(':test-cobweb-api')
         // spring boot
         compile('org.springframework.boot:spring-boot-starter-web')
         testCompile('org.springframework.boot:spring-boot-starter-test')
