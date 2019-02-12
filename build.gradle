@@ -159,6 +159,7 @@ project("test-cobweb-api") {
 project("test-cobweb") {
 
     dependencies {
+        compile('org.springframework.boot:spring-boot-starter')
         compile('org.springframework.boot:spring-boot-configuration-processor')
     }
 }
@@ -166,8 +167,8 @@ project("test-cobweb") {
 project("test-cobweb-service-1") {
 
     dependencies {
-        compile project(':test-cobweb')
         compile project(':test-cobweb-api')
+        compile project(':test-cobweb')
         // spring boot
         compile('org.springframework.boot:spring-boot-starter-web')
         testCompile('org.springframework.boot:spring-boot-starter-test')
@@ -177,8 +178,8 @@ project("test-cobweb-service-1") {
 project("test-cobweb-rest-service-1") {
 
     dependencies {
-        compile project(':test-cobweb')
         compile project(':test-cobweb-api')
+        compile project(':test-cobweb')
         // spring boot
         compile('org.springframework.boot:spring-boot-starter-web')
         testCompile('org.springframework.boot:spring-boot-starter-test')
