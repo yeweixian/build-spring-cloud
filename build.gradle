@@ -159,6 +159,7 @@ project("test-cobweb-api") {
 project("test-cobweb") {
 
     dependencies {
+        compile('org.projectlombok:lombok:1.18.4')
         compile('org.springframework.boot:spring-boot-starter')
         compile('org.springframework.boot:spring-boot-configuration-processor')
     }
