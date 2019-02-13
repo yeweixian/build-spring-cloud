@@ -3,6 +3,7 @@ package com.dangerye.cobwebservice1;
 import com.dangerye.cobweb.utils.CobwebUtils;
 import com.dangerye.cobweb.utils.ServiceOperation;
 import com.dangerye.cobwebservice.api.HelloServiceApi;
+import com.dangerye.cobwebservice.api.response.HelloResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,8 @@ public class CobwebService1ApplicationTests {
     public void testRemoteCall() {
         HelloServiceApi serviceApi = (HelloServiceApi) CobwebUtils.getRemoteBean(HelloServiceApi.class);
         String result = serviceApi.sayHello("dangerye");
-
-        System.out.println("result: " + result);
+        System.out.println("serviceApi.sayHello result: " + result);
+        HelloResponse response = serviceApi.getHelloResponse("yeweixian");
+        System.out.println("serviceApi.getHelloResponse result: " + response);
     }
 }

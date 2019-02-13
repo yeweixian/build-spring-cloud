@@ -12,7 +12,12 @@ public class RemoteBeanHandler implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        System.out.println("RemoteBeanHandler msg, method: " + method.getName());
+        String className = method.getDeclaringClass().getName();
+        System.out.println(className);
+        String methodName = method.getName();
+        System.out.println(methodName);
+
+
         return null;
     }
 }
