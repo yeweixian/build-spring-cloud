@@ -6,4 +6,7 @@ import lombok.Data;
 public class HelloResponse {
 
     private String helloMsg;
+    private int age;
+    private Long time;
+    private String json;
 }

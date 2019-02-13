@@ -16,6 +16,7 @@ public class RemoteBeanHandler implements InvocationHandler {
         System.out.println(className);
         String methodName = method.getName();
         System.out.println(methodName);
+        Class<?>[] paramTypes = method.getParameterTypes();
 
 
         return null;
