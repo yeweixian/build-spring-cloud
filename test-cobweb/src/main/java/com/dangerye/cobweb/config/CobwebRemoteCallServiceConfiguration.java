@@ -1,6 +1,8 @@
 package com.dangerye.cobweb.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -17,6 +19,13 @@ public class CobwebRemoteCallServiceConfiguration {
     private static final int PORT = 34900;
 
     private static final String CHARSET = "UTF-8";
+
+    private ApplicationContext applicationContext;
+
+    @Autowired
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
     @PostConstruct
     public void init() {
