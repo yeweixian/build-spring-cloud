@@ -1,5 +1,7 @@
 package com.dangerye.cobwebservice1;
 
+import com.alibaba.fastjson.JSON;
+import com.dangerye.cobweb.entity.TransferResponse;
 import com.dangerye.cobweb.utils.CobwebUtils;
 import com.dangerye.cobweb.utils.ServiceOperation;
 import com.dangerye.cobwebservice.api.HelloServiceApi;
@@ -30,7 +32,8 @@ public class CobwebService1ApplicationTests {
         Class<?>[] paramTypes = new Class[]{String.class};
         Object[] args = new Object[]{"yeweixian"};
 
-        ServiceOperation.custom(applicationContext).test(className, methodName, paramTypes, args);
+        TransferResponse transferResponse = ServiceOperation.custom(applicationContext).handle(className, methodName, paramTypes, args);
+        System.out.println(JSON.toJSONString(transferResponse));
     }
 
     @Test
