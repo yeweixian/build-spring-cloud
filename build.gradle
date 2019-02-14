@@ -160,6 +160,11 @@ project("test-cobweb") {
 
     dependencies {
         compile('org.projectlombok:lombok:1.18.4')
+        compile('com.google.guava:guava:27.0-jre')
+        compile('org.apache.commons:commons-lang3:3.8')
+        compile('org.apache.commons:commons-collections4:4.1')
+        compile('com.alibaba:fastjson:1.2.54')
+        // spring boot
         compile('org.springframework.boot:spring-boot-starter')
         compile('org.springframework.boot:spring-boot-configuration-processor')
     }
