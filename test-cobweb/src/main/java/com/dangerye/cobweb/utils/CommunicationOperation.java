@@ -81,7 +81,7 @@ public class CommunicationOperation {
                         return ServiceOperation.custom(applicationContext)
                                 .handle(transferRequest.getClassName(),
                                         transferRequest.getMethodName(),
-                                        (Class<?>[]) paramTypes.toArray(),
+                                        paramTypes.toArray(new Class<?>[]{}),
                                         paramValues.toArray());
                     })
                     .orElse(new TransferResponse());

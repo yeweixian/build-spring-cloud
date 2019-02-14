@@ -1,10 +1,11 @@
 package com.dangerye.cobweb.proxy;
 
+import com.alibaba.fastjson.JSON;
 import com.dangerye.cobweb.entity.TransferRequest;
-import com.dangerye.cobweb.entity.TransferResponse;
 import com.dangerye.cobweb.utils.CommunicationOperation;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ClassUtils;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -35,7 +36,15 @@ public class RemoteBeanHandler implements InvocationHandler {
         }
 
         return Optional.ofNullable(CommunicationOperation.requestRemoteService(transferRequest))
-                .map(TransferResponse::getReturnValue)
+                .map(transferResponse -> {
+                    String str = JSON.toJSONString(transferResponse.getReturnValue());
+                    try {
+                        return JSON.parseObject(str, ClassUtils.getClass(transferResponse.getReturnType()));
+                    } catch (Exception e) {
+                        log.error("-----------------", e);
+                        return null;
+                    }
+                })
                 .orElse(null);
     }
 }
