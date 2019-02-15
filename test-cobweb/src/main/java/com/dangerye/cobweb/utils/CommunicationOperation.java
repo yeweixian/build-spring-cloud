@@ -3,6 +3,7 @@ package com.dangerye.cobweb.utils;
 import com.alibaba.fastjson.JSON;
 import com.dangerye.cobweb.entity.TransferRequest;
 import com.dangerye.cobweb.entity.TransferResponse;
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -46,7 +47,20 @@ public class CommunicationOperation {
         }
 
         try {
-            return JSON.parseObject(response, TransferResponse.class);
+            TransferResponse transferResponse = JSON.parseObject(response, TransferResponse.class);
+            if (transferResponse.getReturnType() == null) {
+                return null;
+            }
+            Class<?> cls = ClassUtils.getClass(transferResponse.getReturnType());
+            if (Objects.equal(cls, Void.TYPE)) {
+                return null;
+            }
+
+            transferResponse.setReturnValue(Optional.ofNullable(transferResponse.getReturnValue())
+                    .map(JSON::toJSONString)
+                    .map(item -> JSON.parseObject(item, cls))
+                    .orElse(null));
+            return transferResponse;
         } catch (Exception e) {
             log.error("CommunicationOperation requestRemoteService error.", e);
             return null;
