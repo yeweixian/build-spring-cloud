@@ -85,11 +85,24 @@ public class CommunicationOperation {
                         if (CollectionUtils.isNotEmpty(transferRequest.getParameters())) {
                             transferRequest.getParameters().forEach(parameter -> {
                                 try {
-                                    paramTypes.add(ClassUtils.getClass(parameter.getParamType()));
-                                    paramValues.add(parameter.getParamValue());
-                                } catch (Exception ignored) {
+                                    Class<?> cls = ClassUtils.getClass(parameter.getParamType());
+                                    Object param = Optional.ofNullable(parameter.getParamValue())
+                                            .map(JSON::toJSONString)
+                                            .map(item -> JSON.parseObject(item, cls))
+                                            .orElse(null);
+                                    // add to List
+                                    paramTypes.add(cls);
+                                    paramValues.add(param);
+                                } catch (Exception e) {
+                                    log.error("CommunicationOperation handleResponse error.", e);
                                 }
                             });
+
+                            int paramSize = transferRequest.getParameters().size();
+                            if (paramSize != paramTypes.size() || paramSize != paramValues.size()) {
+                                log.error("CommunicationOperation handleResponse Parameter exception.");
+                                return null;
+                            }
                         }
                         // Handle
                         return ServiceOperation.custom(applicationContext)
@@ -97,8 +110,7 @@ public class CommunicationOperation {
                                         transferRequest.getMethodName(),
                                         paramTypes.toArray(new Class<?>[]{}),
                                         paramValues.toArray());
-                    })
-                    .orElse(new TransferResponse());
+                    }).orElse(new TransferResponse());
             String message = JSON.toJSONString(transferResponse);
             write(outputStream, message);
             outputStream.close();
