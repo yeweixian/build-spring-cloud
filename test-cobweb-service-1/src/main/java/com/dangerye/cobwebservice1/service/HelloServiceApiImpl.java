@@ -29,6 +29,6 @@ public class HelloServiceApiImpl implements HelloServiceApi {
         result.setAge(age);
         result.setTime(time);
         result.setJson(Optional.ofNullable(request).map(HelloRequest::toString).orElse(""));
-        return null;
+        return result;
     }
 }
