@@ -53,7 +53,10 @@ public class Test {
             System.out.println("first: " + first);
             int second = num;
             System.out.println("second: " + second);
-            if ((first << 8 + second) != num) {
+
+            int third = (first << 8 + second);
+            System.out.println("third: " + third);
+            if (third != num) {
                 break;
             }
             num++;
