@@ -54,7 +54,7 @@ public class Test {
             int second = num;
             System.out.println("second: " + second);
 
-            int third = (first << 8 + second);
+            int third = (first << 8) + second;
             System.out.println("third: " + third);
             if (third != num) {
                 break;
