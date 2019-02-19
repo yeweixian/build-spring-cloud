@@ -50,7 +50,9 @@ public class Test {
         int num = 0;
         while (true) {
             int first = num >> 8;
+            System.out.println("first: " + first);
             int second = num;
+            System.out.println("second: " + second);
             if ((first << 8 + second) != num) {
                 break;
             }
