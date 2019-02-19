@@ -37,5 +37,14 @@ public class Test {
         for (int i = 0; i < 20; i++) {
             System.out.println("max >> " + i + ": " + (max >> i));
         }
+
+        System.out.println("0 << " + 8 + ": " + (0));
+        System.out.println("1 << " + 8 + ": " + (1 << 8));
+
+        int num = 0;
+        while (num >> 8 == 0) {
+            num++;
+        }
+        System.out.println("num: " + num);
     }
 }
