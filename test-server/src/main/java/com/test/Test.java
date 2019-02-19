@@ -41,8 +41,19 @@ public class Test {
         System.out.println("0 << " + 8 + ": " + (0));
         System.out.println("1 << " + 8 + ": " + (1 << 8));
 
+//        int num = 0;
+//        while (num >> 8 == 0) {
+//            num++;
+//        }
+//        System.out.println("num: " + num);
+
         int num = 0;
-        while (num >> 8 == 0) {
+        while (true) {
+            int first = num >> 8;
+            int second = num;
+            if ((first << 8 + second) != num) {
+                break;
+            }
             num++;
         }
         System.out.println("num: " + num);
