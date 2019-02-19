@@ -12,7 +12,8 @@ public class Test {
 
     private static final Gson gson = new GsonBuilder().serializeNulls().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
 
-    public static void main(String[] args) {
+    @org.junit.Test
+    public void testToJson() {
         List<TestModel> list = new ArrayList<>();
         TestModel testModel1 = new TestModel();
         testModel1.setId(1L);
@@ -28,5 +29,13 @@ public class Test {
         list.add(testModel2);
 
         System.out.println(gson.toJson(list));
+    }
+
+    @org.junit.Test
+    public void testIntMax() {
+        int max = Integer.MAX_VALUE;
+        for (int i = 0; i < 20; i++) {
+            System.out.println("max >> " + i + ": " + (max >> i));
+        }
     }
 }
