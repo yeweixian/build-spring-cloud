@@ -47,18 +47,24 @@ public class Test {
 //        }
 //        System.out.println("num: " + num);
 
-        int num = 0;
-        while (true) {
-            int first = num >> 8;
-            System.out.println("first: " + first);
-            int second = num;
-            System.out.println("second: " + second);
+//        int num = 0;
+//        while (true) {
+//            int first = num >> 8;
+//            System.out.println("first: " + first);
+//            int second = num;
+//            System.out.println("second: " + second);
+//
+//            int third = (first << 8) + second;
+//            System.out.println("third: " + third);
+//            if (third != num) {
+//                break;
+//            }
+//            num++;
+//        }
+//        System.out.println("num: " + num);
 
-            int third = (first << 8) + second;
-            System.out.println("third: " + third);
-            if (third != num) {
-                break;
-            }
+        int num = 0;
+        while (((num >> 8) >> 8) == 0) {
             num++;
         }
         System.out.println("num: " + num);
