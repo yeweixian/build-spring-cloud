@@ -68,5 +68,6 @@ public class Test {
             num++;
         }
         System.out.println("num: " + num);
+        System.out.println("num & 255: " + (num & 255));
     }
 }
