@@ -240,4 +240,37 @@ public class SocketTest {
         while (true) {
         }
     }
+
+    @Test
+    public void testSocketServer5() throws IOException {
+        System.out.println("server start & wait...");
+        ServerSocket server = new ServerSocket(PORT);
+        Socket socket = server.accept();
+        InputStream inputStream = socket.getInputStream();
+
+        while (true) {
+            int data = inputStream.read();
+            if (data == -1) {
+                break;
+            }
+            System.out.println("data: " + data);
+        }
+
+        System.out.println("server stop.");
+        inputStream.close();
+        socket.close();
+        server.close();
+    }
+
+    @Test
+    public void testSocketClient5() throws IOException {
+        System.out.println("client send...");
+        Socket socket = new Socket(HOST, PORT);
+        OutputStream outputStream = socket.getOutputStream();
+        outputStream.write(-1);
+
+        System.out.println("client send done.");
+        outputStream.close();
+        socket.close();
+    }
 }
