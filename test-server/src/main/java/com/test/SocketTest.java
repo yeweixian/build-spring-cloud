@@ -271,11 +271,11 @@ public class SocketTest {
 //            outputStream.write(i);
 //        }
 
-        outputStream.write(-1);
+//        outputStream.write(-1);
 
-//        String message = "Hello, DangerYe";
-//        byte[] sendBytes = message.getBytes(CHARSET);
-//        outputStream.write(sendBytes);
+        String message = "Hello, DangerYe";
+        byte[] sendBytes = message.getBytes(CHARSET);
+        outputStream.write(sendBytes);
 
         System.out.println("client send done.");
         outputStream.close();
