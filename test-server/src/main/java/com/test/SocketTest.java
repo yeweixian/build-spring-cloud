@@ -277,7 +277,7 @@ public class SocketTest {
 
 //        outputStream.write(-1);
 
-        String message = "Hello, DangerYe";
+        String message = "Hello, DangerYe. 我好犀利";
         byte[] sendBytes = message.getBytes(CHARSET);
         outputStream.write(sendBytes);
 
