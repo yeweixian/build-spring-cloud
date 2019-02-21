@@ -248,15 +248,19 @@ public class SocketTest {
         Socket socket = server.accept();
         InputStream inputStream = socket.getInputStream();
 
+        byte[] bytes = new byte[1024];
+        int i = 0;
         while (true) {
             int data = inputStream.read();
             if (data == -1) {
                 break;
             }
             System.out.println("data: " + data);
+            bytes[i] = (byte) data;
+            i++;
         }
 
-        System.out.println("server stop.");
+        System.out.println("server stop. msg: " + new String(bytes, 0, i, CHARSET));
         inputStream.close();
         socket.close();
         server.close();
