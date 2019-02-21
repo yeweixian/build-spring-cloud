@@ -267,9 +267,15 @@ public class SocketTest {
         System.out.println("client send...");
         Socket socket = new Socket(HOST, PORT);
         OutputStream outputStream = socket.getOutputStream();
-        for (int i = -128; i < 128; i++) {
-            outputStream.write(i);
-        }
+//        for (int i = -128; i < 128; i++) {
+//            outputStream.write(i);
+//        }
+
+        outputStream.write(-1);
+
+//        String message = "Hello, DangerYe";
+//        byte[] sendBytes = message.getBytes(CHARSET);
+//        outputStream.write(sendBytes);
 
         System.out.println("client send done.");
         outputStream.close();
