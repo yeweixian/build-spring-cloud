@@ -267,7 +267,9 @@ public class SocketTest {
         System.out.println("client send...");
         Socket socket = new Socket(HOST, PORT);
         OutputStream outputStream = socket.getOutputStream();
-        outputStream.write(-1);
+        for (int i = -128; i < 128; i++) {
+            outputStream.write(i);
+        }
 
         System.out.println("client send done.");
         outputStream.close();
