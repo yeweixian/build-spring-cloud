@@ -1,7 +1,10 @@
 package com.dangerye.cobweb.asyncload.utils;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.concurrent.*;
 
+@Slf4j
 public final class AsyncLoadUtils<T> {
 
     private ExecutorService executorService;
@@ -11,19 +14,20 @@ public final class AsyncLoadUtils<T> {
         executorService = Executors.newSingleThreadExecutor();
     }
 
-    public static <T> AsyncLoadUtils<T> load(AsyncFunction<T> function) {
+    public static <T> AsyncLoadUtils<T> load(Callable<T> callable) {
         AsyncLoadUtils<T> result = new AsyncLoadUtils<>();
-        result.setFutureTask(new FutureTask<>(function::action));
+        result.setFutureTask(new FutureTask<>(callable));
         result.getExecutorService().execute(result.getFutureTask());
         return result;
     }
 
-    public T get(long timeout) {
-        T result = null;
+    public T get(long timeout) throws InterruptedException, ExecutionException, TimeoutException {
+        T result;
         try {
             result = futureTask.get(timeout, TimeUnit.MILLISECONDS);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             futureTask.cancel(true);
+            throw e;
         } finally {
             executorService.shutdown();
         }
