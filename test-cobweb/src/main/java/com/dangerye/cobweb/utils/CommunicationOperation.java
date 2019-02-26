@@ -13,6 +13,7 @@ import org.springframework.context.ApplicationContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +25,7 @@ public class CommunicationOperation {
     private static final int PORT = 34900;
     private static final String CHARSET = "UTF-8";
 
-    public static TransferResponse requestRemoteService(TransferRequest transferRequest) throws IOException {
+    public static TransferResponse requestRemoteService(TransferRequest transferRequest) throws IOException, ClassNotFoundException {
 
         String message = JSON.toJSONString(transferRequest);
         String response;
@@ -41,106 +42,94 @@ public class CommunicationOperation {
 
             inputStream.close();
             outputStream.close();
-        } catch (IOException e) {
-            log.error("CommunicationOperation requestRemoteService error.", e);
-            throw e;
         }
 
-        try {
-            TransferResponse transferResponse = JSON.parseObject(response, TransferResponse.class);
-            if (transferResponse.getReturnType() == null) {
-                return null;
-            }
-            Class<?> cls = ClassUtils.getClass(transferResponse.getReturnType());
-            if (Objects.equal(cls, Void.TYPE)) {
-                return null;
-            }
-
-            transferResponse.setReturnValue(Optional.ofNullable(transferResponse.getReturnValue())
-                    .map(JSON::toJSONString)
-                    .map(item -> JSON.parseObject(item, cls))
-                    .orElse(null));
-            return transferResponse;
-        } catch (Exception e) {
-            log.error("CommunicationOperation requestRemoteService error.", e);
+        TransferResponse transferResponse = JSON.parseObject(response, TransferResponse.class);
+        if (transferResponse.getReturnType() == null) {
             return null;
         }
+        Class<?> cls = ClassUtils.getClass(transferResponse.getReturnType());
+        if (Objects.equal(cls, Void.TYPE)) {
+            return null;
+        }
+
+        transferResponse.setReturnValue(Optional.ofNullable(transferResponse.getReturnValue())
+                .map(JSON::toJSONString)
+                .map(item -> JSON.parseObject(item, cls))
+                .orElse(null));
+        return transferResponse;
     }
 
-    public static boolean handleResponse(Socket socketItem, ApplicationContext applicationContext) {
+    public static boolean handleResponse(Socket socketItem, ApplicationContext applicationContext) throws IOException,
+            ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         try (Socket socket = socketItem) {
-
             // Receive
             InputStream inputStream = socket.getInputStream();
             String transferRequestMsg = read(inputStream);
 
             // Reply
             OutputStream outputStream = socket.getOutputStream();
-            TransferResponse transferResponse = Optional.ofNullable(JSON.parseObject(transferRequestMsg, TransferRequest.class))
-                    .map(transferRequest -> {
+            TransferRequest transferRequest = JSON.parseObject(transferRequestMsg, TransferRequest.class);
+            if (transferRequest == null) {
+                throw new IOException("CommunicationOperation handleResponse error: transferRequestMsg{" + transferRequestMsg + "}");
+            }
 
-                        List<Class<?>> paramTypes = Lists.newArrayList();
-                        List<Object> paramValues = Lists.newArrayList();
+            // 参数类型
+            List<Class<?>> paramTypes = Lists.newArrayList();
+            // 参数值
+            List<Object> paramValues = Lists.newArrayList();
 
-                        if (CollectionUtils.isNotEmpty(transferRequest.getParameters())) {
-                            transferRequest.getParameters().forEach(parameter -> {
-                                try {
-                                    Class<?> cls = ClassUtils.getClass(parameter.getParamType());
-                                    Object param = Optional.ofNullable(parameter.getParamValue())
-                                            .map(JSON::toJSONString)
-                                            .map(item -> JSON.parseObject(item, cls))
-                                            .orElse(null);
-                                    // add to List
-                                    paramTypes.add(cls);
-                                    paramValues.add(param);
-                                } catch (Exception e) {
-                                    log.error("CommunicationOperation handleResponse error.", e);
-                                }
-                            });
+            if (CollectionUtils.isNotEmpty(transferRequest.getParameters())) {
+                transferRequest.getParameters().forEach(parameter -> {
+                    try {
+                        Class<?> cls = ClassUtils.getClass(parameter.getParamType());
+                        Object param = Optional.ofNullable(parameter.getParamValue())
+                                .map(JSON::toJSONString)
+                                .map(item -> JSON.parseObject(item, cls))
+                                .orElse(null);
+                        // add to List
+                        paramTypes.add(cls);
+                        paramValues.add(param);
+                    } catch (Exception e) {
+                        log.error("CommunicationOperation handleResponse error.", e);
+                    }
+                });
 
-                            int paramSize = transferRequest.getParameters().size();
-                            if (paramSize != paramTypes.size() || paramSize != paramValues.size()) {
-                                log.error("CommunicationOperation handleResponse Parameter exception.");
-                                return null;
-                            }
-                        }
-                        // Handle
-                        return ServiceOperation.custom(applicationContext)
-                                .handle(transferRequest.getClassName(),
-                                        transferRequest.getMethodName(),
-                                        paramTypes.toArray(new Class<?>[]{}),
-                                        paramValues.toArray());
-                    }).orElse(new TransferResponse());
+                int paramSize = transferRequest.getParameters().size();
+                if (paramSize != paramTypes.size() || paramSize != paramValues.size()) {
+                    throw new IOException("CommunicationOperation handleResponse Parameter exception.");
+                }
+            }
+
+            // Handle
+            TransferResponse transferResponse = ServiceOperation.custom(applicationContext)
+                    .handle(transferRequest.getClassName(), transferRequest.getMethodName(), paramTypes.toArray(new Class<?>[]{}), paramValues.toArray());
             String message = JSON.toJSONString(transferResponse);
+
             write(outputStream, message);
             outputStream.close();
             inputStream.close();
             return true;
-        } catch (Exception e) {
-            log.error("CommunicationOperation handleResponse error.", e);
-            return false;
         }
     }
 
     private static String read(InputStream inputStream) throws IOException {
-        String result = null;
-        while (true) {
-            int first = inputStream.read();
-            if (first == -1) {
-                break;
-            }
-
-            int second = inputStream.read();
-            int length = (first << 8) + second;
-            byte[] bytes = new byte[length];
-            int len = inputStream.read(bytes);
-            result = new String(bytes, 0, len, CHARSET);
+        int first = inputStream.read();
+        if (first == -1) {
+            throw new IOException("read exception.");
         }
-        return result;
+        int second = inputStream.read();
+        int length = (first << 8) + second;
+        byte[] bytes = new byte[length];
+        int len = inputStream.read(bytes);
+        return new String(bytes, 0, len, CHARSET);
     }
 
     private static void write(OutputStream outputStream, String message) throws IOException {
         byte[] sendBytes = message.getBytes(CHARSET);
+        if ((sendBytes.length >> 16) > 0) {
+            throw new IllegalArgumentException("Transmit data exceeding 65536 bytes.");
+        }
         outputStream.write(sendBytes.length >> 8);
         outputStream.write(sendBytes.length);
         outputStream.write(sendBytes);
