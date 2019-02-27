@@ -34,6 +34,10 @@ public interface TestServiceApi {
 
     List<String> testStringListMethod(List<String> first, List<String> second, List<String> third);
 
+    List<TestResponse> testObjectListMethod(List<TestRequest> first);
+
+    List<TestResponse> testObjectListMethod(List<TestRequest> first, List<TestRequest> second, List<TestRequest> third);
+
     Map<Long, Long> testMapMethod(Map<Long, Long> first);
 
     Map<Long, Double> testMapMethod(Map<Long, Long> first, Map<Long, Long> second, Map<Long, Long> third);
@@ -41,4 +45,8 @@ public interface TestServiceApi {
     Map<String, String> testStringMapMethod(Map<String, String> first);
 
     Map<String, String> testStringMapMethod(Map<String, String> first, Map<String, String> second, Map<String, String> third);
+
+    Map<String, TestResponse> testObjectMapMethod(Map<String, TestRequest> first);
+
+    Map<String, TestResponse> testObjectMapMethod(Map<String, TestRequest> first, Map<String, TestRequest> second, Map<String, TestRequest> third);
 }
