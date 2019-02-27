@@ -122,10 +122,14 @@ public class CommunicationOperation {
         int length = (first << 8) + second;
         byte[] bytes = new byte[length];
         int len = inputStream.read(bytes);
-        return new String(bytes, 0, len, CHARSET);
+
+        String result = new String(bytes, 0, len, CHARSET);
+        log.info("CommunicationOperation.read, message:{}", result);
+        return result;
     }
 
     private static void write(OutputStream outputStream, String message) throws IOException {
+        log.info("CommunicationOperation.write, message:{}", message);
         byte[] sendBytes = message.getBytes(CHARSET);
         if ((sendBytes.length >> 16) > 0) {
             throw new IllegalArgumentException("Transmit data exceeding 65536 bytes.");
