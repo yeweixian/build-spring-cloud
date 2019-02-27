@@ -5,6 +5,7 @@ import com.dangerye.cobweb.entity.TransferResponse;
 import com.dangerye.cobweb.utils.CobwebUtils;
 import com.dangerye.cobweb.utils.ServiceOperation;
 import com.dangerye.cobwebservice.api.HelloServiceApi;
+import com.dangerye.cobwebservice.api.TestServiceApi;
 import com.dangerye.cobwebservice.api.request.HelloRequest;
 import com.dangerye.cobwebservice.api.response.HelloResponse;
 import org.junit.Test;
@@ -56,5 +57,11 @@ public class CobwebService1ApplicationTests {
         request.setName("test");
         HelloResponse response2 = serviceApi.getHelloResponse(null, 0, System.currentTimeMillis(), request);
         System.out.println("serviceApi.getHelloResponse result2: " + response2);
+    }
+
+    @Test
+    public void testMethodApi() {
+        TestServiceApi serviceApi = (TestServiceApi) CobwebUtils.getRemoteBean(TestServiceApi.class);
+        serviceApi.testVoidMethod();
     }
 }
