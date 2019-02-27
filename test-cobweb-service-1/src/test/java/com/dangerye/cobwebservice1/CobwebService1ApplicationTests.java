@@ -14,6 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.lang.reflect.InvocationTargetException;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class CobwebService1ApplicationTests {
@@ -32,7 +34,12 @@ public class CobwebService1ApplicationTests {
         Class<?>[] paramTypes = new Class[]{String.class};
         Object[] args = new Object[]{"yeweixian"};
 
-        TransferResponse transferResponse = ServiceOperation.custom(applicationContext).handle(className, methodName, paramTypes, args);
+        TransferResponse transferResponse = null;
+        try {
+            transferResponse = ServiceOperation.custom(applicationContext).handle(className, methodName, paramTypes, args);
+        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
         System.out.println(JSON.toJSONString(transferResponse));
     }
 
