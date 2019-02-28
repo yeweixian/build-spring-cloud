@@ -7,7 +7,9 @@ import com.dangerye.cobweb.utils.ServiceOperation;
 import com.dangerye.cobwebservice.api.HelloServiceApi;
 import com.dangerye.cobwebservice.api.TestServiceApi;
 import com.dangerye.cobwebservice.api.request.HelloRequest;
+import com.dangerye.cobwebservice.api.request.TestRequest;
 import com.dangerye.cobwebservice.api.response.HelloResponse;
+import com.google.common.collect.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +65,10 @@ public class CobwebService1ApplicationTests {
     public void testMethodApi() {
         TestServiceApi serviceApi = (TestServiceApi) CobwebUtils.getRemoteBean(TestServiceApi.class);
         serviceApi.testVoidMethod();
-        System.out.println(JSON.toJSONString(serviceApi.testObjectListMethod(null, null, null)));
+        TestRequest request = new TestRequest();
+        request.setLongVal(0);
+        request.setDoubleVal(3.14);
+        request.setStringVal("PI");
+        System.out.println(JSON.toJSONString(serviceApi.testObjectListMethod(Lists.newArrayList(request), Lists.newArrayList(request, request), Lists.newArrayList(request, request, request))));
     }
 }
