@@ -63,5 +63,6 @@ public class CobwebService1ApplicationTests {
     public void testMethodApi() {
         TestServiceApi serviceApi = (TestServiceApi) CobwebUtils.getRemoteBean(TestServiceApi.class);
         serviceApi.testVoidMethod();
+        System.out.println(JSON.toJSONString(serviceApi.testObjectListMethod(null, null, null)));
     }
 }
