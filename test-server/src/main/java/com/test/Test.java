@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.test.entity.SubModel;
 import com.test.entity.TestModel;
 
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,5 +70,21 @@ public class Test {
         }
         System.out.println("num: " + num);
         System.out.println("num & 255: " + (num & 255));
+    }
+
+    @org.junit.Test
+    public void testBuffer() {
+        FloatBuffer floatBuffer = FloatBuffer.allocate(10);
+        for (int i = 0; i < floatBuffer.capacity(); i++) {
+            float f = (float) Math.sin(((float) i / 10) * 2 * Math.PI);
+            System.out.println(f);
+            floatBuffer.put(f);
+        }
+        System.out.println("------------");
+        floatBuffer.flip();
+        while (floatBuffer.hasRemaining()) {
+            float f = floatBuffer.get();
+            System.out.println(f);
+        }
     }
 }
