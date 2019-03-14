@@ -1,5 +1,17 @@
 package com.test;
 
+import io.netty.bootstrap.Bootstrap;
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.string.StringDecoder;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
@@ -284,5 +296,54 @@ public class SocketTest {
         System.out.println("client send done.");
         outputStream.close();
         socket.close();
+    }
+
+    @Test
+    public void testNettyServer() throws InterruptedException {
+        ServerBootstrap serverBootstrap = new ServerBootstrap();
+
+        NioEventLoopGroup boss = new NioEventLoopGroup();
+        NioEventLoopGroup worker = new NioEventLoopGroup();
+
+        serverBootstrap.group(boss, worker)
+                .channel(NioServerSocketChannel.class)
+                .childHandler(new ChannelInitializer<SocketChannel>() {
+                    @Override
+                    protected void initChannel(SocketChannel ch) throws Exception {
+                        //ch.pipeline().addLast(new StringDecoder());
+                        ch.pipeline().addLast(new SimpleChannelInboundHandler<String>() {
+                            @Override
+                            protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
+                                System.out.println(msg);
+                            }
+                        });
+                    }
+                })
+                .option(ChannelOption.SO_BACKLOG, 128)
+                .childOption(ChannelOption.SO_KEEPALIVE, true)
+                .bind(PORT)
+                .sync()
+                .channel().closeFuture().sync();
+    }
+
+    @Test
+    public void testNettyClient() throws InterruptedException {
+        Bootstrap bootstrap = new Bootstrap();
+        NioEventLoopGroup group = new NioEventLoopGroup();
+
+        bootstrap.group(group)
+                .channel(NioSocketChannel.class)
+                .handler(new ChannelInitializer<Channel>() {
+                    @Override
+                    protected void initChannel(Channel ch) throws Exception {
+                        ch.pipeline().addLast(new StringDecoder());
+                    }
+                });
+        Channel channel = bootstrap.connect(HOST, PORT).channel();
+
+        while (true) {
+            channel.writeAndFlush("Hello world! time: " + System.currentTimeMillis());
+            Thread.sleep(2000);
+        }
     }
 }
