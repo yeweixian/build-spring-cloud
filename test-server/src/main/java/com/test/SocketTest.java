@@ -2,16 +2,19 @@ package com.test;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.string.StringDecoder;
+import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
@@ -300,29 +303,41 @@ public class SocketTest {
 
     @Test
     public void testNettyServer() throws InterruptedException {
+        EventLoopGroup bossGroup = new NioEventLoopGroup(1);
+        EventLoopGroup workerGroup = new NioEventLoopGroup();
         ServerBootstrap serverBootstrap = new ServerBootstrap();
-
-        NioEventLoopGroup boss = new NioEventLoopGroup();
-        NioEventLoopGroup worker = new NioEventLoopGroup();
-
-        serverBootstrap.group(boss, worker)
+        serverBootstrap.group(bossGroup, workerGroup)
                 .channel(NioServerSocketChannel.class)
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
-                        ch.pipeline().addLast(new StringDecoder());
-                        ch.pipeline().addLast(new SimpleChannelInboundHandler<String>() {
+                        ch.pipeline().addLast(new ChannelInboundHandlerAdapter() {
                             @Override
-                            protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
-                                System.out.println(msg);
+                            public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+                                //Discard the received data silently
+                                //ByteBuf是一个引用计数对象实现ReferenceCounted，他就是在有对象引用的时候计数+1，无的时候计数-1，当为0对象释放内存
+                                ByteBuf in = (ByteBuf) msg;
+                                try {
+                                    while (in.isReadable()) {
+                                        System.out.println((char) in.readByte());
+                                        System.out.flush();
+                                    }
+                                } finally {
+                                    ReferenceCountUtil.release(msg);
+                                }
+                            }
+
+                            @Override
+                            public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+                                cause.printStackTrace();
+                                ctx.close();
                             }
                         });
                     }
                 })
                 .option(ChannelOption.SO_BACKLOG, 128)
                 .childOption(ChannelOption.SO_KEEPALIVE, true)
-                .bind(PORT)
-                .sync()
+                .bind(PORT).sync()
                 .channel().closeFuture().sync();
     }
 
