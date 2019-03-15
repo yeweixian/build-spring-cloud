@@ -2,19 +2,13 @@ package com.test;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.string.StringDecoder;
-import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
@@ -301,64 +295,40 @@ public class SocketTest {
         socket.close();
     }
 
+    public static class MyChannelInitializer extends ChannelInitializer<SocketChannel> {
+        @Override
+        protected void initChannel(SocketChannel ch) throws Exception {
+            ch.pipeline().addLast(new StringDecoder());
+        }
+    }
+
     @Test
     public void testNettyServer() throws InterruptedException {
-        EventLoopGroup bossGroup = new NioEventLoopGroup(1);
+        EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
-        ServerBootstrap serverBootstrap = new ServerBootstrap();
-        serverBootstrap.group(bossGroup, workerGroup)
-                .channel(NioServerSocketChannel.class)
-                .childHandler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    protected void initChannel(SocketChannel ch) throws Exception {
-                        ch.pipeline().addLast(new ChannelInboundHandlerAdapter() {
-                            @Override
-                            public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-                                //Discard the received data silently
-                                //ByteBuf是一个引用计数对象实现ReferenceCounted，他就是在有对象引用的时候计数+1，无的时候计数-1，当为0对象释放内存
-                                ByteBuf in = (ByteBuf) msg;
-                                try {
-                                    while (in.isReadable()) {
-                                        System.out.println((char) in.readByte());
-                                        System.out.flush();
-                                    }
-                                } finally {
-                                    ReferenceCountUtil.release(msg);
-                                }
-                            }
-
-                            @Override
-                            public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-                                cause.printStackTrace();
-                                ctx.close();
-                            }
-                        });
-                    }
-                })
-                .option(ChannelOption.SO_BACKLOG, 128)
-                .childOption(ChannelOption.SO_KEEPALIVE, true)
-                .bind(PORT).sync()
-                .channel().closeFuture().sync();
+        try {
+            ServerBootstrap serverBootstrap = new ServerBootstrap();
+            serverBootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
+                    .childHandler(new MyChannelInitializer());
+            serverBootstrap.bind(PORT).sync()
+                    .channel().closeFuture().sync();
+        } finally {
+            bossGroup.shutdownGracefully();
+            workerGroup.shutdownGracefully();
+        }
     }
 
     @Test
     public void testNettyClient() throws InterruptedException {
-        Bootstrap bootstrap = new Bootstrap();
-        NioEventLoopGroup group = new NioEventLoopGroup();
-
-        bootstrap.group(group)
-                .channel(NioSocketChannel.class)
-                .handler(new ChannelInitializer<Channel>() {
-                    @Override
-                    protected void initChannel(Channel ch) throws Exception {
-                        ch.pipeline().addLast(new StringDecoder());
-                    }
-                });
-        Channel channel = bootstrap.connect(HOST, PORT).channel();
-
-        while (true) {
-            channel.writeAndFlush("Hello world! time: " + System.currentTimeMillis());
-            Thread.sleep(2000);
+        EventLoopGroup group = new NioEventLoopGroup();
+        try {
+            Bootstrap bootstrap = new Bootstrap();
+            bootstrap.group(group).channel(NioSocketChannel.class)
+                    .handler(new MyChannelInitializer());
+            bootstrap.connect(HOST, PORT).sync()
+                    .channel().closeFuture().sync();
+        } finally {
+            group.shutdownGracefully();
         }
     }
 }
