@@ -2,13 +2,18 @@ package com.test;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.string.StringDecoder;
+import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
@@ -302,6 +307,48 @@ public class SocketTest {
         }
     }
 
+    public static class ServerHandler extends SimpleChannelInboundHandler<ByteBuf> {
+        @Override
+        public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+            ctx.flush();
+        }
+
+        @Override
+        public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+            cause.printStackTrace();
+            ctx.close();
+        }
+
+        @Override
+        protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
+            System.out.println(msg.toString(CharsetUtil.UTF_8));
+            ctx.write(Unpooled.copiedBuffer("Hello, client. I get the msg.", CharsetUtil.UTF_8));
+        }
+    }
+
+    public static class ClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
+        @Override
+        public void channelActive(ChannelHandlerContext ctx) throws Exception {
+            ctx.writeAndFlush(Unpooled.copiedBuffer("Hello, server. I am client.", CharsetUtil.UTF_8));
+        }
+
+        @Override
+        public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+            ctx.flush();
+        }
+
+        @Override
+        public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+            cause.printStackTrace();
+            ctx.close();
+        }
+
+        @Override
+        protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
+            System.out.println(msg.toString(CharsetUtil.UTF_8));
+        }
+    }
+
     @Test
     public void testNettyServer() throws InterruptedException {
         EventLoopGroup bossGroup = new NioEventLoopGroup();
@@ -309,7 +356,7 @@ public class SocketTest {
         try {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
             serverBootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
-                    .childHandler(new MyChannelInitializer());
+                    .childHandler(new ServerHandler());
             serverBootstrap.bind(PORT).sync()
                     .channel().closeFuture().sync();
         } finally {
@@ -324,7 +371,7 @@ public class SocketTest {
         try {
             Bootstrap bootstrap = new Bootstrap();
             bootstrap.group(group).channel(NioSocketChannel.class)
-                    .handler(new MyChannelInitializer());
+                    .handler(new ClientHandler());
             bootstrap.connect(HOST, PORT).sync()
                     .channel().closeFuture().sync();
         } finally {
