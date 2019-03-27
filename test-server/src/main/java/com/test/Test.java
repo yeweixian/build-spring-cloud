@@ -1,5 +1,6 @@
 package com.test;
 
+import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.test.entity.SubModel;
@@ -8,6 +9,7 @@ import com.test.entity.TestModel;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Test {
 
@@ -86,5 +88,25 @@ public class Test {
             float f = floatBuffer.get();
             System.out.println(f);
         }
+    }
+
+    @org.junit.Test
+    public void testMap() {
+        Long key1 = new Long("1");
+        Long key2 = new Long("1");
+        long key3 = 1;
+        int key4 = 1;
+        String key5 = "1";
+        Map map = Maps.newHashMap();
+        map.put(key1, "key1.value");
+        System.out.println("key2.value: " + map.get(key2));
+        System.out.println("key3.value: " + map.get(key3));
+        System.out.println("key4.value: " + map.get(key4));
+        System.out.println("key5.value: " + map.get(key5));
+        System.out.println(key1 == key2);
+        System.out.println(key1 == key3);
+        System.out.println(key2 == key3);
+        System.out.println("key1 hashCode: " + key1.hashCode());
+        System.out.println("key2 hashCode: " + key2.hashCode());
     }
 }
