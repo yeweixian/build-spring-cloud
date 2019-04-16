@@ -1,13 +1,18 @@
 package com.test;
 
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.test.entity.SubModel;
 import com.test.entity.TestModel;
+import org.apache.commons.lang3.StringUtils;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class Test {
 
@@ -86,5 +91,21 @@ public class Test {
             float f = floatBuffer.get();
             System.out.println(f);
         }
+    }
+
+    @org.junit.Test
+    public void testAddAll() {
+        String[] strArray = new String[]{"", ""};
+        List<String> list =
+                Arrays.stream(strArray)
+                        .map(str -> {
+                            if (StringUtils.isNotBlank(str)) {
+                                return str;
+                            }
+                            return null;
+                        })
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
+        Lists.newArrayList().addAll(list);
     }
 }
