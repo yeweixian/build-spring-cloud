@@ -1,20 +1,20 @@
 package com.test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.test.entity.SubModel;
 import com.test.entity.TestModel;
-import org.apache.commons.lang3.StringUtils;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.Map;
 
 public class Test {
 
@@ -118,14 +118,13 @@ public class Test {
     @org.junit.Test
     public void testAddAll() {
         String[] strArray = new String[]{"", ""};
+        Map<String, String> map = ImmutableMap.<String, String>builder()
+                .put("1", "1")
+                .put("2", "2")
+                .build();
         List<String> list =
                 Arrays.stream(strArray)
-                        .map(str -> {
-                            if (StringUtils.isNotBlank(str)) {
-                                return str;
-                            }
-                            return null;
-                        })
+                        .map(map::get)
                         .filter(Objects::nonNull)
                         .collect(Collectors.toList());
         Lists.newArrayList().addAll(list);
