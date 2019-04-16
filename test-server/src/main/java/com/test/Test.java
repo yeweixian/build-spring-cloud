@@ -125,6 +125,10 @@ public class Test {
         List<String> list =
                 Arrays.stream(strArray)
                         .map(map::get)
+                        .map(item -> {
+                            String[] array = item.split(",");
+                            return "";
+                        })
                         .filter(Objects::nonNull)
                         .collect(Collectors.toList());
         Lists.newArrayList().addAll(list);
