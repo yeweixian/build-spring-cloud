@@ -116,6 +116,16 @@ public class Test {
     }
 
     @org.junit.Test
+    public void testSameKeyMap() {
+        Map<String, String> map = Maps.newHashMap();
+        map.put("1", "1");
+        map.put("2", "2");
+        map.put("1", "3");
+        map.put("2", "4");
+        System.out.println(gson.toJson(map));
+    }
+
+    @org.junit.Test
     public void testAddAll() {
         String[] strArray = new String[]{"", ""};
         Map<String, String> map = ImmutableMap.<String, String>builder()
