@@ -1,9 +1,11 @@
 package com.test;
 
+import com.test.config.TestProperty;
 import com.test.dao.student.StudentMapper;
 import com.test.dao.student.entity.Student;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -17,6 +19,13 @@ import java.util.Optional;
 @Slf4j
 @SpringBootApplication
 public class TestApplication {
+
+    @Autowired
+    private TestProperty testProperty;
+    @Autowired
+    private TestProperty testPropertyWithValue;
+    @Autowired
+    private TestProperty testPropertyWithNull;
 
     public static void main(String[] args) throws Exception {
         ConfigurableApplicationContext context = SpringApplication.run(TestApplication.class, args);
