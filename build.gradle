@@ -32,7 +32,7 @@ allprojects { project ->
     repositories {
         mavenCentral()
         jcenter()
-        maven { url "http://repo.spring.io/milestone" }
+        maven { url "https://repo.spring.io/milestone" }
     }
 
     dependencyManagement {
